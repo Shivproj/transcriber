@@ -1,2 +1,5 @@
 .env
 next.md
+__pycache__
+.venv
+uploaded_files
