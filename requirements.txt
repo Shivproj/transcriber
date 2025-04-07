@@ -3,4 +3,5 @@ uvicorn
 streamlit
 requests
 aiofiles
-streamlit-fastapi
+pydub
+mutagen
