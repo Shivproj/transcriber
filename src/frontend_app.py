@@ -121,11 +121,19 @@ if st.session_state.audio_uploaded:
                     "start_time": start_time,
                     "end_time": end_time,
                 }
-                response = requests.post(PROCESS_URL, json=payload, timeout=60)
+                response = requests.post(PROCESS_URL, json=payload, timeout=360)
 
                 if response.status_code == 200:
-                    response_data = response.json()
-                    st.success("Transcription completed successfully!")
+                    transcription_content = response.content
+                    st.download_button(
+                        label="Download Transcription",
+                        data=transcription_content,
+                        file_name="transcription.txt",
+                        mime="text/plain",
+                    )
+                    st.success("Transcription completed successfully! You can download the file.")
+                    
+                    
                 else:
                     st.error(f"Failed to process audio: {response.text}")
             except requests.exceptions.RequestException as e:

@@ -5,3 +5,6 @@ requests
 aiofiles
 pydub
 mutagen
+google-genai
+google
+python-dotenv
