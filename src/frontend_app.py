@@ -13,10 +13,11 @@ st.title("Audio Trimmer")
 st.write("Upload your MP3 or WAV file, select a range, and process it.")
 
 def format_time(seconds):
+    """Formats seconds into hh:mm:ss format."""
     hours = seconds // 3600
     minutes = (seconds % 3600) // 60
     seconds = seconds % 60
-    return f"{hours}h {minutes}m {seconds}s"
+    return f"{hours:02}:{minutes:02}:{seconds:02}"
 
 # Initialize session state variables
 if "uploaded_file" not in st.session_state:
@@ -36,7 +37,6 @@ if "transcribe_clicked" not in st.session_state:
 
 # Callback function for the "Transcribe" button
 def transcribe_audio():
-    print("Helloo")
     st.session_state.transcribe_clicked = True
 
 # Step 1: Upload Audio
@@ -88,34 +88,30 @@ if st.session_state.audio_uploaded:
         key="audio_slider",
     )
 
-    # Update session state with slider values
     st.session_state.slider_values = (start_time, end_time)
 
-    # Convert slider values to hours:minutes:seconds format
+    # Format the selected times
     start_time_formatted = format_time(start_time)
     end_time_formatted = format_time(end_time)
 
-    # Calculate the selected duration
     selected_duration_seconds = end_time - start_time
     selected_duration_formatted = format_time(selected_duration_seconds)
 
-    # Display the selected range in formatted time
+    # Display the selected range
     st.write(f"Selected range: Start = {start_time_formatted}, End = {end_time_formatted}")
 
-    # Display the selected duration in large font
     st.markdown(
         f"<h2 style='text-align: center; color: green;'>Selected Duration: {selected_duration_formatted}</h2>",
         unsafe_allow_html=True,
     )
 
-    # Step 3: Transcribe Button
+    # Transcribe button
     st.button("Transcribe", on_click=transcribe_audio, type="secondary")
 
-    # Handle transcription logic when the button is clicked
+    # Step 3: Transcription
     if st.session_state.transcribe_clicked:
         with st.spinner("Transcribing audio..."):
             try:
-                # Send the selected range to the backend for processing
                 payload = {
                     "filename": st.session_state.uploaded_file.name,
                     "start_time": start_time,
@@ -128,12 +124,10 @@ if st.session_state.audio_uploaded:
                     st.download_button(
                         label="Download Transcription",
                         data=transcription_content,
-                        file_name="transcription.txt",
-                        mime="text/plain",
+                        file_name="transcription.docx",
+                        mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
                     )
                     st.success("Transcription completed successfully! You can download the file.")
-                    
-                    
                 else:
                     st.error(f"Failed to process audio: {response.text}")
             except requests.exceptions.RequestException as e:
@@ -141,5 +135,4 @@ if st.session_state.audio_uploaded:
             except Exception as e:
                 st.error(f"An unexpected error occurred during transcription: {str(e)}")
 
-        # Reset the button state
         st.session_state.transcribe_clicked = False

@@ -4,7 +4,7 @@ streamlit
 requests
 aiofiles
 pydub
-mutagen
 google-genai
 google
 python-dotenv
+python-docx
