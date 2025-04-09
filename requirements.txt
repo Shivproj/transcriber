@@ -1,5 +1,10 @@
 fastapi[standard]==0.115.12
 uvicorn
-gradio
+streamlit
 requests
 aiofiles
+pydub
+google-genai
+google
+python-dotenv
+python-docx

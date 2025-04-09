@@ -3,3 +3,4 @@ next.md
 __pycache__
 .venv
 uploaded_files
+output_directory
