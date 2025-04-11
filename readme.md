@@ -19,6 +19,7 @@ Before you begin, ensure you have the following installed and configured:
 * **Python:** Version 3.11.3.
 * **Virtual Environment (Recommended):** Helps isolate project dependencies.
 * **Google GenAI API Key:** Required for accessing the transcription service.
+* **FFMPEG:** An additional dependency required for audio processing.
 
 ## 🚀 Installation: Get Started in Minutes!
 
@@ -59,6 +60,9 @@ Follow these simple steps to get The Transcriber up and running on your machine:
      GENAI_API_KEY=YOUR_GOOGLE_GENAI_API_KEY
      FASTAPI_URL=http://127.0.0.1:7400
      ```
+
+5. **Alternatively on Windows:**
+   Create a shortcut on the desktop and map it to the `.bat` file. Enjoy!
 
 ## 🛠️ Usage: Transcribe Your Audio
 
@@ -122,6 +126,8 @@ Encountering issues? Here are some common problems and their solutions:
     pip install -r requirements.txt
     ```
     Make sure your virtual environment is activated.
+* **System Performance Issues:** 
+  * **Solution:** Increase the timeouts if your system is slower.
 
 ## 🤝 Contributing
 

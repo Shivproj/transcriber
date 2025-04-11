@@ -1,4 +1,4 @@
-fastapi[standard]==0.115.12
+fastapi
 uvicorn
 streamlit
 requests
@@ -8,3 +8,4 @@ google-genai
 google
 python-dotenv
 python-docx
+python-multipart
