@@ -74,34 +74,68 @@ if uploaded_file is not None and not st.session_state.audio_uploaded:
             st.error(f"An unexpected error occurred during upload: {str(e)}")
 
 # Step 2: Select Start and End Points
+def format_time(seconds):
+    h = seconds // 3600
+    m = (seconds % 3600) // 60
+    s = seconds % 60
+    return f"{h:02}:{m:02}:{s:02}"
+
+def parse_time(time_str):
+    try:
+        parts = time_str.strip().split(":")
+        parts = [int(p) for p in parts]
+        while len(parts) < 3:
+            parts.insert(0, 0)
+        h, m, s = parts
+        return h * 3600 + m * 60 + s
+    except:
+        return None
+
 if st.session_state.audio_uploaded:
-    st.subheader("2. Select Start and End Points")
+    st.subheader("2. Enter Start and End Points")
+
     total_seconds = st.session_state.audio_length_seconds
 
-    time_labels = [format_time(i) for i in range(total_seconds + 1)]
+    # Default values: start=0, end=audio_length
+    default_start = format_time(0)
+    default_end = format_time(total_seconds)
 
-    start_time, end_time = st.select_slider(
-        "Select the range to trim the audio:",
-        options=list(range(total_seconds + 1)),  
-        value=st.session_state.slider_values,
-        format_func=lambda x: time_labels[x], 
-        key="audio_slider",
+    # Text input boxes with defaults
+    start_time_str = st.text_input(
+        "Start time (HH:MM:SS):",
+        value=default_start,
+        key="start_time_input"
     )
+    end_time_str = st.text_input(
+        "End time (HH:MM:SS):",
+        value=default_end,
+        key="end_time_input"
+    )
+
+    start_time = parse_time(start_time_str)
+    end_time = parse_time(end_time_str)
+
+    # Clamp values safely without popping errors
+    if start_time is None:
+        start_time = 0
+    else:
+        start_time = max(0, min(start_time, total_seconds))
+
+    if end_time is None:
+        end_time = total_seconds
+    else:
+        end_time = max(0, min(end_time, total_seconds))
+
+    if start_time > end_time:
+        st.warning("Start time is after end time. Adjust if needed.")
 
     st.session_state.slider_values = (start_time, end_time)
 
-    # Format the selected times
-    start_time_formatted = format_time(start_time)
-    end_time_formatted = format_time(end_time)
-
+    # Display selected range and duration
     selected_duration_seconds = end_time - start_time
-    selected_duration_formatted = format_time(selected_duration_seconds)
-
-    # Display the selected range
-    st.write(f"Selected range: Start = {start_time_formatted}, End = {end_time_formatted}")
-
+    st.write(f"Selected range: Start = {format_time(start_time)}, End = {format_time(end_time)}")
     st.markdown(
-        f"<h2 style='text-align: center; color: green;'>Selected Duration: {selected_duration_formatted}</h2>",
+        f"<h2 style='text-align: center; color: green;'>Selected Duration: {format_time(selected_duration_seconds)}</h2>",
         unsafe_allow_html=True,
     )
 
