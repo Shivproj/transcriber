@@ -6,10 +6,10 @@ import aiofiles
 from pydub import AudioSegment
 from google import genai
 from dotenv import load_dotenv
-from fastapi.responses import FileResponse
 from docx import Document
 
 load_dotenv()
+
 # FastAPI Backend
 app = FastAPI()
 
@@ -50,6 +50,7 @@ async def upload_file(file: UploadFile = File(...)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"File upload failed: {str(e)}")
 
+
 @app.post("/process_audio/")
 async def process_audio(request: Request):
     """Processes the audio file to trim it and optionally transcribe it."""
@@ -58,7 +59,6 @@ async def process_audio(request: Request):
         filename = data.get("filename")
         start_time = data.get("start_time")
         end_time = data.get("end_time")
-        state = data.get("state", "trimming") 
 
         if not filename or start_time is None or end_time is None:
             raise HTTPException(
@@ -80,6 +80,10 @@ async def process_audio(request: Request):
         trimmed_audio.export(processed_file_path, format="mp3")
 
         transcription_result = await generateTranscript(processed_file_path)
+
+    
+        if transcription_result is None:
+            raise HTTPException(status_code=500, detail="Transcription generation failed")
 
         doc = Document()
         doc.add_heading("Transcription", level=1)
@@ -150,7 +154,7 @@ async def generateTranscript(processed_file_path):
                     * **Language and Script:** The output must use only English script, and all words must be in English.
                     * **Grammar and Readability:** Ensure the transcript is grammatically correct and easy to read.
 
-                    Your expertise in language processing and attention to detail are crucial for this task. Make sure, you go through every line carefully when ypu transcribe , the output should be in perfect english.
+                    Your expertise in language processing and attention to detail are crucial for this task. Make sure you go through every line carefully when you transcribe, the output should be in perfect English.
                     """
 
         result = client.models.generate_content(
